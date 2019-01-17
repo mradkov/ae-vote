@@ -6,7 +6,7 @@ contract Vote =
    record state = {
       votes: map(address, candidates) }
 
-   public stateful function init() = {
+   public stateful function init() : state = {
       votes = { } }
 
    public stateful function vote(candidate: address) : bool =
