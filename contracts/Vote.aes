@@ -1,22 +1,22 @@
 contract Vote =
 
-   record candidates = {
+   record candidate = {
       voters: list(address) }
 
    record state = {
-      votes: map(address, candidates) }
+      votes: map(address, candidate) }
 
    public stateful function init() : state = {
       votes = { } }
 
-   public stateful function vote(candidate: address) : bool =
-      let new_votes_state = Call.caller :: state.votes[candidate].voters
+   public stateful function vote(candidate_address: address) : bool =
+      let new_votes_state = Call.caller :: state.votes[candidate_address].voters
       put(state{
-         votes[candidate].voters = new_votes_state })
+         votes[candidate_address].voters = new_votes_state })
       true
 
-   public function count_votes(candidate : address) : int =
-      size(state.votes[candidate].voters)  
+   public function count_votes(candidate_address : address) : int =
+      size(state.votes[candidate_address].voters)  
 
    private function size(l : list('a)) : int = size'(l, 0)
    
@@ -25,7 +25,7 @@ contract Vote =
          [] => x
          _ :: l' => size'(l', x + 1)
 
-   public stateful function add_candidate(candidate: address) : bool =
+   public stateful function add_candidate(candidate_address: address) : bool =
       put(state{
-         votes[candidate] = { voters = [] } })
+         votes[candidate_address] = { voters = [] } })
       true
