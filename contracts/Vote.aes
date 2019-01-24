@@ -10,6 +10,7 @@ contract Vote =
       votes = { } }
 
    public stateful function vote(candidate: address) : bool =
+      is_candidate(candidate)
       let new_votes_state = Call.caller :: state.votes[candidate].voters
       put(state{
          votes[candidate].voters = new_votes_state })
@@ -26,6 +27,16 @@ contract Vote =
          _ :: l' => size'(l', x + 1)
 
    public stateful function add_candidate(candidate: address) : bool =
-      put(state{
-         votes[candidate] = { voters = [] } })
+      is_candidate(candidate)
       true
+
+   private stateful function is_candidate(candidate: address) =
+      let candidate_found = lookupByAddress(candidate, state.votes, { voters = [] })
+      if (size(candidate_found.voters) == 0)
+         put(state{
+            votes[candidate] = { voters = [] } })
+
+   private function lookupByAddress(k : address, m, v) =
+      switch(Map.lookup(k,m))
+         None => v
+         Some(x) => x
